@@ -43,17 +43,23 @@ const displayPhones=phones=>{
                     <div class="card-body">
                       <h2 class="card-title">${phone.phone_name}</h2>
                       <p>If a dog chews shoes whose shoes does he choose?</p>
-                      <div class="card-actions justify-end">
-                        <button class="btn btn-primary">Buy Now</button>
+                      <div class="card-actions justify-center">
+                        <button onClick="handleShoeDetails('${phone.slug}')" class="btn btn-primary">Shoe Details</button>
                       </div>
                     </div>
         `
         // 04 append child
         phoneContainer.appendChild(phoneCard);
     });
+    //===========hide loading spinner===========
+    toggleLoadingSpinner(false);
 }
-
+// handle search recap
 const handle_search=()=>{
+    //=======================
+    // toggleLoadingSpinner();
+    toggleLoadingSpinner(true);
+    //=======================
     const searchField=document.getElementById("search_field");
     const searchText=searchField.value;
     //console.log(searchText);
@@ -61,8 +67,39 @@ const handle_search=()=>{
     loadPhone(searchText);
 }
 
+//==============
+const toggleLoadingSpinner=(isLoading)=>{
+    const loadingSpinner=document.getElementById('loading_spinner');
+    if(isLoading){
+        loadingSpinner.classList.remove('hidden');
+    }else{
+        loadingSpinner.classList.add('hidden');
+    }
+}
 
+const handleShoeDetails=async(id)=>{
+    //console.log('object', id);
+    const res=await fetch(`https://openapi.programming-hero.com/api/phone/${id}`);
+    const datas=await res.json();
+    // console.log(datas);
+    const phone=datas.data;
+    showPhoneDetails(phone);
+}
 
+const showPhoneDetails=(phone)=>{
+    console.log(phone);
+    const phoneName=document.getElementById('phoneName');
+    //console.log(phoneName);
+    phoneName.innerHTML=phone.name;
+    const showDetailsContainer=document.getElementById('show_details_container');
+    showDetailsContainer.innerHTML=`
+    <img src=${phone.image}>
+    <p>${phone.brand}</p>
+    <p>${phone.mainFeatures.displaySize}</p>
+    <p><span>Storage:</span>${phone?.mainFeatures?.storage}</p>
+    `
+    show_details_modal.showModal();
+}
 
 
 
